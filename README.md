@@ -2,7 +2,7 @@
 
 A real-time flight tracking application allowing users to search for flights by IATA code and visualize their path on an interactive map.
 
-![alt text](image.png)
+![alt text](/public/image.png)
 
 ## Introduction
 

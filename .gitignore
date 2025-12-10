@@ -31,7 +31,3 @@ yarn-error.log*
 
 # Vercel
 .vercel
-
-# Local Test Scripts
-test_api.js
-api_result.txt

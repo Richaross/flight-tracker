@@ -1,38 +1,48 @@
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useFlightContext } from '../lib/context/FlightContext';
+import { IMAGES, COLORS } from '../lib/constants';
 
-export default function FlightAttendant({ loading, searched, hasResults }) {
+export default function FlightAttendant() {
+  const { isLoading, isSearching, hasResults } = useFlightContext();
+
   // Determine state
   let state = 'default';
-  let bgImage = '/penguin-default.png';
+  let bgImage = IMAGES.PENGUIN.DEFAULT;
 
-  if (loading) {
+  if (isLoading) {
     state = 'loading';
-    // reusing default for now as loading gen failed, or we can use error if it makes more sense, 
-    // but usually waiting is neutral. 
-    bgImage = '/penguin-thinking.png'; 
-  } else if (searched && !hasResults) {
+    bgImage = IMAGES.PENGUIN.THINKING; 
+  } else if (isSearching && !hasResults) {
     state = 'error';
-    bgImage = '/penguin-error.png';
+    bgImage = IMAGES.PENGUIN.ERROR;
   }
 
   // If we have results (searched && hasResults), this component might be hidden 
-  // or shown differently if the user wants it over the map? 
-  // The request said: "background is shown over the map when there is no prompt yet"
-  // "when there is no return after a search"
-  // "appears when the search is loading"
-  // So if results are found, this component should probably NOT be visible (map takes over).
-
-  if (searched && hasResults && !loading) {
+  if (isSearching && hasResults && !isLoading) {
       return null;
   }
 
   return (
     <div 
-        key={state} 
-        className="absolute inset-x-0 bottom-0 top-0 pointer-events-none z-10 flex items-center overflow-hidden animate-fade-in"
+        className="absolute inset-x-0 bottom-0 top-0 pointer-events-none z-10 flex items-center overflow-hidden"
     >
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+      {/* 
+        Turquoise Background Layer 
+        This is always present behind the image. When an image fades out, 
+        this color will be revealed before the new image fades in.
+      */}
+      <div className={`absolute inset-0 z-0 ${COLORS.BG_TURQUOISE_CLASS}`} />
+
+      {/* Background Image with AnimatePresence */}
+      <AnimatePresence mode="wait">
+        <motion.div
+           key={state}
+           className="absolute inset-0 z-10"
+           initial={{ opacity: 0 }}
+           animate={{ opacity: 1, transition: { delay: 0.2, duration: 0.5 } }} // Add delay to let background show
+           exit={{ opacity: 0, transition: { duration: 0.5 } }}
+        >
           <Image
             src={bgImage}
             alt="Flight Attendant Penguin"
@@ -41,8 +51,8 @@ export default function FlightAttendant({ loading, searched, hasResults }) {
             priority
             unoptimized
           />
-      </div>
-
+        </motion.div>
+      </AnimatePresence>
 
     </div>
   );

@@ -1,10 +1,13 @@
 'use client';
 
-import { useFlightSearch } from '../lib/hooks/useFlightSearch';
-import FlightCard from './flight/FlightCard';
 import { useEffect } from 'react';
+import { useFlightSearch } from '../lib/hooks/useFlightSearch';
+import { useFlightContext } from '../lib/context/FlightContext';
+import FlightCard from './flight/FlightCard';
 
-export default function FlightSearch({ onFlightSelect, onStateChange }) {
+export default function FlightSearch() {
+  const { handleSearchStateChange, setSelectedFlight } = useFlightContext();
+  
   const { 
     query, 
     setQuery, 
@@ -13,18 +16,18 @@ export default function FlightSearch({ onFlightSelect, onStateChange }) {
     searched, 
     lastSearchedQuery, 
     search 
-  } = useFlightSearch(onStateChange);
+  } = useFlightSearch(handleSearchStateChange);
 
-  // Sync flight selection with parent
+  // Sync flight selection with parent (via Context)
   useEffect(() => {
-    if (searched && onFlightSelect) {
+    if (searched) {
         if (flights.length > 0) {
-            onFlightSelect(flights[0]);
+            setSelectedFlight(flights[0]);
         } else {
-            onFlightSelect(null);
+            setSelectedFlight(null);
         }
     }
-  }, [flights, searched, onFlightSelect]);
+  }, [flights, searched, setSelectedFlight]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

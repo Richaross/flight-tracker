@@ -2,6 +2,7 @@
 
 import React from 'react';
 import FlightSearch from '../FlightSearch';
+import { useFlightContext } from '../../lib/context/FlightContext';
 
 // Option A: Living Header Logic
 const getHeaderContent = (loading, searching, hasResults) => {
@@ -20,14 +21,8 @@ const getHeaderContent = (loading, searching, hasResults) => {
     return { title, subtitle };
 };
 
-export default function Sidebar({ 
-    selectedFlight, 
-    isSearching, 
-    hasResults, 
-    isLoading, 
-    onFlightSelect, 
-    onSearchStateChange 
-}) {
+export default function Sidebar() {
+    const { selectedFlight, isSearching, hasResults, isLoading } = useFlightContext();
     const { title, subtitle } = getHeaderContent(isLoading, isSearching, hasResults);
 
     return (
@@ -52,10 +47,7 @@ export default function Sidebar({
 
             {/* Search & Results Panel */}
             <div className="glass dark:glass-dark p-6 rounded-3xl shadow-2xl backdrop-blur-xl border border-white/40 min-h-[200px]">
-                <FlightSearch
-                    onFlightSelect={onFlightSelect}
-                    onStateChange={onSearchStateChange}
-                />
+                <FlightSearch />
             </div>
 
             {/* Quick Stats / Info */}
